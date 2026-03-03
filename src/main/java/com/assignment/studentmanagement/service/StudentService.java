@@ -3,6 +3,7 @@ package com.assignment.studentmanagement.service;
 import com.assignment.studentmanagement.exception.ResourceNotFoundException;
 import com.assignment.studentmanagement.model.Student;
 import com.assignment.studentmanagement.repository.StudentRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,11 @@ public class StudentService {
                 adminId
         );
 
-        studentRepository.save(newStudent);
+        try {
+            studentRepository.save(newStudent);
+        } catch (DuplicateKeyException e) {
+            throw new IllegalArgumentException("Email already exists");
+        }
     }
 
     //READ ALL
@@ -54,10 +59,14 @@ public class StudentService {
 
     //UPDATE
     public void updateStudent(Integer id, Student student, Integer adminId) {
-        int rows = studentRepository.update(id, student, adminId);
+        try {
+            int rows = studentRepository.update(id, student, adminId);
 
-        if(rows == 0) {
-            throw new ResourceNotFoundException("Student not found or access denied");
+            if (rows == 0) {
+                throw new ResourceNotFoundException("Student not found or access denied");
+            }
+        } catch (DuplicateKeyException e) {
+            throw new IllegalArgumentException("Email already exists");
         }
     }
 
@@ -70,3 +79,4 @@ public class StudentService {
         }
     }
 }
+

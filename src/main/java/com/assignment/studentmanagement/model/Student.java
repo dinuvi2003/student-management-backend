@@ -39,6 +39,10 @@ public class Student {
         this.adminId = adminId;
     }
 
+    //Getters
+    public Integer getId() {
+        return id;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -62,5 +66,7 @@ public class Student {
     public Integer getAdminId() {
         return adminId;
     }
+
+
 
 }
