@@ -1,6 +1,7 @@
 package com.assignment.studentmanagement.repository;
 
 import com.assignment.studentmanagement.model.Student;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -30,8 +31,16 @@ public class StudentRepository {
     }
 
     //READ ALL
-    public List<Student> findAllByAdminId(Integer adminId) {
-        String sql = "SELECT * FROM students WHERE admin_id = ?";
+    public List<Student> findAllByAdminId(Integer adminId, int page, int size) {
+
+        int offset = page * size;
+
+        String sql = """
+                    SELECT * FROM students
+                    WHERE admin_id = ?
+                    ORDER BY id DESC
+                    LIMIT ? OFFSET ?
+               """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) ->
                 new Student(
@@ -42,7 +51,40 @@ public class StudentRepository {
                     rs.getDate("date_of_birth").toLocalDate(),
                     rs.getDate("enrollment_date").toLocalDate(),
                     rs.getInt("admin_id")
-                ), adminId);
+                ),
+                adminId,
+                size,
+                offset
+        );
+    }
+
+    public List<Student> searchStudents(Integer adminId, String keyword, int size, int offset) {
+
+        String sql = """
+        SELECT * FROM students
+        WHERE admin_id = ?
+        AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)
+        ORDER BY id DESC
+        LIMIT ? OFFSET ?
+    """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                        new Student(
+                                rs.getInt("id"),
+                                rs.getString("first_name"),
+                                rs.getString("last_name"),
+                                rs.getString("email"),
+                                rs.getDate("date_of_birth").toLocalDate(),
+                                rs.getDate("enrollment_date").toLocalDate(),
+                                rs.getInt("admin_id")
+                        ),
+                adminId,
+                "%" + keyword + "%",
+                "%" + keyword + "%",
+                "%" + keyword + "%",
+                size,
+                offset
+        );
     }
 
     //READ ONE
@@ -89,4 +131,6 @@ public class StudentRepository {
         String sql = "DELETE FROM students WHERE id = ? AND admin_id = ?";
         return jdbcTemplate.update(sql,id,adminId);
     }
+
+
 }

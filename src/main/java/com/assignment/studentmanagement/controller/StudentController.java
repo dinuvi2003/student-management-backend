@@ -3,6 +3,7 @@ package com.assignment.studentmanagement.controller;
 import com.assignment.studentmanagement.model.Student;
 import com.assignment.studentmanagement.service.StudentService;
 import com.assignment.studentmanagement.security.CustomUserDetails;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
@@ -25,9 +26,24 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getAllStudents(Authentication authentication) {
+    public List<Student> getAllStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication) {
         Integer adminId = getAdminId(authentication);
-        return studentService.getAllStudents(adminId);
+        return studentService.getAllStudents(adminId, page, size);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Student>> searchStudents(
+            @RequestParam String keyword,
+            @RequestParam int page,
+            @RequestParam int size,
+            Authentication authentication
+    ) {
+        Integer adminId = getAdminId(authentication);
+        List<Student> students = studentService.searchStudents(adminId, keyword, page, size);
+        return ResponseEntity.ok(students);
     }
 
     @GetMapping("/{id}")

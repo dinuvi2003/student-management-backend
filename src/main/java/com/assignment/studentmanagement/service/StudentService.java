@@ -42,8 +42,17 @@ public class StudentService {
     }
 
     //READ ALL
-    public List<Student> getAllStudents(Integer adminId) {
-        return studentRepository.findAllByAdminId(adminId);
+    public List<Student> getAllStudents(Integer adminId, int page, int size) {
+
+        if(page < 0) {
+            throw new IllegalArgumentException("Page number cannot be negative");
+        }
+
+        if(size <= 0) {
+            throw new IllegalArgumentException("Page size must be greater than 0");
+        }
+
+        return studentRepository.findAllByAdminId(adminId, page, size);
     }
 
     //READ ONE
@@ -77,6 +86,12 @@ public class StudentService {
         if(rows == 0) {
             throw new ResourceNotFoundException("Student not found or access denied");
         }
+    }
+    public List<Student> searchStudents(Integer adminId, String keyword, int page, int size) {
+
+        int offset = page * size;
+
+        return studentRepository.searchStudents(adminId, keyword, size, offset);
     }
 }
 
