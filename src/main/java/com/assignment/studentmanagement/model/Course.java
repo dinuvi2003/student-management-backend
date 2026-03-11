@@ -4,13 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 @Data
-@NoArgsConstructor
 public class Course {
 
     private Integer id;
     private String name;
     private String description;
+
+    public Course() {}
 
     public Course(Integer id, String name, String description) {
         this.id = id;
@@ -18,9 +22,7 @@ public class Course {
         this.description = description;
     }
 
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
     public String getName() {
         return name;
     }
@@ -28,5 +30,19 @@ public class Course {
     public String getDescription() {
         return description;
     }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
 
 }

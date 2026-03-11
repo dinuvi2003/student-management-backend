@@ -1,8 +1,11 @@
 package com.assignment.studentmanagement.service;
 
+import com.assignment.studentmanagement.dto.CourseStudentDTO;
 import com.assignment.studentmanagement.exception.ResourceNotFoundException;
 import com.assignment.studentmanagement.model.Course;
+import com.assignment.studentmanagement.model.Student;
 import com.assignment.studentmanagement.repository.CourseRepository;
+import com.assignment.studentmanagement.repository.EnrollmentRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +15,11 @@ import java.util.List;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private EnrollmentRepository enrollmentRepository;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository) {
         this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     // CREATE
@@ -75,5 +80,14 @@ public class CourseService {
         if(rows == 0) {
             throw new ResourceNotFoundException("Course not found with id " + id);
         }
+    }
+
+    public List<CourseStudentDTO> getStudentsByCourse(Integer courseId){
+
+        if(courseId == null){
+            throw new IllegalArgumentException("Course ID cannot be null");
+        }
+
+        return enrollmentRepository.getStudentsByCourseId(courseId);
     }
 }

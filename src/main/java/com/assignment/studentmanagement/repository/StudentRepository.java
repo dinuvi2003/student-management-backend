@@ -17,7 +17,7 @@ public class StudentRepository {
     }
 
     //CREATE
-    public void save(Student student) {
+    public Integer save(Student student) {
         String sql = "INSERT INTO students (first_name, last_name, email, date_of_birth, enrollment_date, admin_id) VALUES (?,?,?,?,?,?)";
 
         jdbcTemplate.update(sql,
@@ -28,16 +28,17 @@ public class StudentRepository {
                 student.getEnrollmentDate(),
                 student.getAdminId()
         );
+
+        return jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
     }
 
     //READ ALL
-    public List<Student> findAllByAdminId(Integer adminId, int page, int size) {
+    public List<Student> findAllByAdminId(int page, int size) {
 
         int offset = page * size;
 
         String sql = """
                     SELECT * FROM students
-                    WHERE admin_id = ?
                     ORDER BY id DESC
                     LIMIT ? OFFSET ?
                """;
@@ -52,18 +53,16 @@ public class StudentRepository {
                     rs.getDate("enrollment_date").toLocalDate(),
                     rs.getInt("admin_id")
                 ),
-                adminId,
                 size,
                 offset
         );
     }
 
-    public List<Student> searchStudents(Integer adminId, String keyword, int size, int offset) {
+    public List<Student> searchStudents(String keyword, int size, int offset) {
 
         String sql = """
         SELECT * FROM students
-        WHERE admin_id = ?
-        AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)
+        WHERE (first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)
         ORDER BY id DESC
         LIMIT ? OFFSET ?
     """;
@@ -78,7 +77,7 @@ public class StudentRepository {
                                 rs.getDate("enrollment_date").toLocalDate(),
                                 rs.getInt("admin_id")
                         ),
-                adminId,
+
                 "%" + keyword + "%",
                 "%" + keyword + "%",
                 "%" + keyword + "%",
@@ -88,8 +87,8 @@ public class StudentRepository {
     }
 
     //READ ONE
-    public Student findByIdAndAdminId(Integer id, Integer adminId) {
-        String sql = "SELECT * FROM students WHERE id = ? AND admin_id = ?";
+    public Student findByIdAndAdminId(Integer id) {
+        String sql = "SELECT * FROM students WHERE id = ?";
 
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
                 new Student(
@@ -100,11 +99,11 @@ public class StudentRepository {
                         rs.getDate("date_of_birth").toLocalDate(),
                         rs.getDate("enrollment_date").toLocalDate(),
                         rs.getInt("admin_id")
-                ), id, adminId);
+                ), id);
     }
 
     //UPDATE
-    public int update(Integer id, Student student, Integer adminId) {
+    public int update(Integer id, Student student) {
         String sql = """
             UPDATE students 
             SET first_name = ?, 
@@ -112,7 +111,7 @@ public class StudentRepository {
                 email = ?, 
                 date_of_birth = ?, 
                 enrollment_date = ?
-            WHERE id = ? AND admin_id = ?
+            WHERE id = ?
         """;
 
         return jdbcTemplate.update(sql,
@@ -121,15 +120,14 @@ public class StudentRepository {
                student.getEmail(),
                student.getDateOfBirth(),
                student.getEnrollmentDate(),
-               id,
-               adminId
+               id
         );
     }
 
     //DELETE
-    public int delete(Integer id, Integer adminId) {
-        String sql = "DELETE FROM students WHERE id = ? AND admin_id = ?";
-        return jdbcTemplate.update(sql,id,adminId);
+    public int delete(Integer id) {
+        String sql = "DELETE FROM students WHERE id = ?";
+        return jdbcTemplate.update(sql,id);
     }
 
 

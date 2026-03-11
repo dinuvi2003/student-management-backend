@@ -1,6 +1,8 @@
 package com.assignment.studentmanagement.controller;
 
+import com.assignment.studentmanagement.dto.CourseStudentDTO;
 import com.assignment.studentmanagement.model.Course;
+import com.assignment.studentmanagement.model.Student;
 import com.assignment.studentmanagement.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,12 @@ public class CourseController {
     @DeleteMapping("/{id}")
     public void deleteCourse(@PathVariable Integer id) {
         courseService.deleteCourse(id);
+    }
+
+    @GetMapping("/{id}/students")
+    public List<CourseStudentDTO> getStudentsInCourse(@PathVariable Integer id){
+
+        return courseService.getStudentsByCourse(id);
     }
 
 }

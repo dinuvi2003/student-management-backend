@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class Student {
 
@@ -65,6 +66,30 @@ public class Student {
 
     public Integer getAdminId() {
         return adminId;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setEnrollmentDate(LocalDate enrollmentDate) {
+        this.enrollmentDate = enrollmentDate;
     }
 
 

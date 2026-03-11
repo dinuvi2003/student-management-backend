@@ -13,18 +13,22 @@ public class DashboardService {
         this.dashboardRepository = dashboardRepository;
     }
 
-    public DashboardStats getDashboardStats(Integer adminId) {
+    public DashboardStats getDashboardStats() {
 
-        int totalStudents = dashboardRepository.getTotalStudents(adminId);
-        int enrollmentYears = dashboardRepository.getEnrollmentYears(adminId);
-        int enrolledThisYear = dashboardRepository.getEnrolledThisYear(adminId);
-        int enrolledThisMonth = dashboardRepository.getEnrolledThisMonth(adminId);
+        int totalStudents = dashboardRepository.getTotalStudents();
+        int enrollmentYears = dashboardRepository.getEnrollmentYears();
+        int enrolledThisYear = dashboardRepository.getEnrolledThisYear();
+        int enrolledThisMonth = dashboardRepository.getEnrolledThisMonth();
+        int totalCourses = dashboardRepository.getTotalCourses();
+        String mostEnrolledCourse = dashboardRepository.getMostEnrolledCourse();
 
         return new DashboardStats(
                 totalStudents,
                 enrollmentYears,
                 enrolledThisYear,
-                enrolledThisMonth
+                enrolledThisMonth,
+                totalCourses,
+                mostEnrolledCourse
         );
     }
 }

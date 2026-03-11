@@ -17,11 +17,7 @@ public class DashboardController {
     }
 
     @GetMapping
-    public DashboardStats getDashboardStats(Authentication authentication) {
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Integer adminId = userDetails.getAdminId();
-
-        return dashboardService.getDashboardStats(adminId);
+    public DashboardStats getDashboardStats() {
+       return dashboardService.getDashboardStats();
     }
 }

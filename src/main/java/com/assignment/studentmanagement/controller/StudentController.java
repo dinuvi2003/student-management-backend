@@ -1,6 +1,9 @@
 package com.assignment.studentmanagement.controller;
 
+import com.assignment.studentmanagement.dto.StudentCourseDTO;
+import com.assignment.studentmanagement.model.Course;
 import com.assignment.studentmanagement.model.Student;
+import com.assignment.studentmanagement.dto.CreateStudentRequest;
 import com.assignment.studentmanagement.service.StudentService;
 import com.assignment.studentmanagement.security.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
@@ -20,48 +23,53 @@ public class StudentController {
     }
 
     @PostMapping
-    public void createStudent(@RequestBody Student student, Authentication authentication) {
+    public void createStudent(@RequestBody CreateStudentRequest request, Authentication authentication) {
         Integer adminId = getAdminId(authentication);
-        studentService.createStudent(student, adminId);
+        studentService.createStudent(
+                request.getStudent(),
+                adminId,
+                request.getCourseIds(),
+                request.getEnrollmentDates()
+        );
     }
 
     @GetMapping
     public List<Student> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            Authentication authentication) {
-        Integer adminId = getAdminId(authentication);
-        return studentService.getAllStudents(adminId, page, size);
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return studentService.getAllStudents(page, size);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<Student>> searchStudents(
             @RequestParam String keyword,
             @RequestParam int page,
-            @RequestParam int size,
-            Authentication authentication
+            @RequestParam int size
     ) {
-        Integer adminId = getAdminId(authentication);
-        List<Student> students = studentService.searchStudents(adminId, keyword, page, size);
+        List<Student> students = studentService.searchStudents(keyword, page, size);
         return ResponseEntity.ok(students);
     }
 
     @GetMapping("/{id}")
-    public Student getStudent(@PathVariable Integer id, Authentication authentication) {
-        Integer adminId = getAdminId(authentication);
-        return studentService.getStudentById(id, adminId);
+    public Student getStudent(@PathVariable Integer id) {
+        return studentService.getStudentById(id);
     }
 
     @PutMapping("/{id}")
-    public void updateStudent(@PathVariable Integer id, @RequestBody Student student, Authentication authentication) {
-        Integer adminId = getAdminId(authentication);
-        studentService.updateStudent(id, student, adminId);
+    public void updateStudent(@PathVariable Integer id, @RequestBody Student student) {
+        studentService.updateStudent(id, student);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Integer id, Authentication authentication) {
-        Integer adminId = getAdminId(authentication);
-        studentService.deleteStudent(id, adminId);
+    public void deleteStudent(@PathVariable Integer id) {
+        studentService.deleteStudent(id);
+    }
+
+    @GetMapping("/{id}/courses")
+    public List<StudentCourseDTO> getCoursesOfStudent(@PathVariable Integer id) {
+
+        return studentService.getCoursesByStudent(id);
     }
 
     private Integer getAdminId(Authentication authentication) {
